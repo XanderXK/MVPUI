@@ -49,9 +49,9 @@ namespace MVPUI.Example
             _items.Clear();
             _items.AddRange(newItems);
             _itemsListView.RefreshItems();
-            if (_itemsListView.selectedIndex == -1 && _items.Count > 0)
+            if (_items.Count > 0)
             {
-                _itemsListView.selectedIndex = 0;
+                _itemsListView.selectedIndex = Mathf.Clamp(_itemsListView.selectedIndex, 0, _items.Count - 1);
             }
         }
     }

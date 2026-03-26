@@ -49,7 +49,10 @@ namespace MVPUI
             OnViewShow = null;
             OnViewHide = null;
             Unbind();
-            Object.Destroy(_view.gameObject);
+            if (_view)
+            {
+                Object.Destroy(_view.gameObject);
+            }
         }
     }
 }
