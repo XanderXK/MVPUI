@@ -15,7 +15,7 @@ namespace MVPUI
 
         protected Presenter()
         {
-            var viewPrefab = ViewCatalog.GetView<T>();
+            var viewPrefab = ViewCatalog.GetPrefab<T>();
             _view = Object.Instantiate(viewPrefab);
         }
 

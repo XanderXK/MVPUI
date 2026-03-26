@@ -10,7 +10,7 @@ namespace MVPUI
 
         private static ViewCatalog _viewCatalog;
 
-        public static T GetView<T>() where T : View
+        public static T GetPrefab<T>() where T : View
         {
             if (!_viewCatalog)
             {
