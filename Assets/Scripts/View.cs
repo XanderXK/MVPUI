@@ -1,17 +1,14 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace MVPUI
 {
     public abstract class View : MonoBehaviour
     {
-        protected UIDocument _uiDocument;
-        protected VisualElement _root;
+        private Canvas _canvas;
 
         private void Awake()
         {
-            _uiDocument = GetComponent<UIDocument>();
-            _root = _uiDocument.rootVisualElement;
+            _canvas = GetComponent<Canvas>();
             Hide();
             Init();
         }
@@ -20,12 +17,12 @@ namespace MVPUI
 
         public void Show()
         {
-            _root.style.display = DisplayStyle.Flex;
+            _canvas.enabled = true;
         }
 
         public void Hide()
         {
-            _root.style.display = DisplayStyle.None;
+            _canvas.enabled = false;
         }
     }
 }

@@ -1,58 +1,69 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
+
 
 namespace MVPUI.Example
 {
     public class InventoryView : View
     {
-        [SerializeField] private VisualTreeAsset _inventoryItemTemplate;
+        [SerializeField] private InventoryButtonElement _inventoryItemPrefab;
+        [SerializeField] private Button _addButton;
+        [SerializeField] private Button _removeButton;
+        [SerializeField] private Transform _itemsContainer;
 
-        private Button _addButton;
-        private Button _removeButton;
-        private ListView _itemsListView;
-        private readonly List<string> _items = new();
+        private InventoryButtonElement _selectedItem;
+        private readonly List<InventoryButtonElement> _inventoryButtonElements = new();
 
         public event Action OnAddItemClicked;
         public event Action<string> OnRemoveItemClicked;
 
         protected override void Init()
         {
-            _itemsListView = _root.Q<ListView>("ItemsListView");
-            _itemsListView.itemsSource = _items;
-            _itemsListView.makeItem = () => _inventoryItemTemplate.Instantiate();
-            _itemsListView.bindItem = (element, index) => { element.Q<Label>("ItemLabel").text = _items[index]; };
-
-            _addButton = _root.Q<Button>("AddButton");
-            _removeButton = _root.Q<Button>("RemoveButton");
-
-            _addButton.RegisterCallback<ClickEvent>(OnAddItemClickHandler);
-            _removeButton.RegisterCallback<ClickEvent>(OnRemoveItemClickHandler);
+            _addButton.onClick.AddListener(OnAddItemClickHandler);
+            _removeButton.onClick.AddListener(OnRemoveItemClickHandler);
         }
 
-        private void OnAddItemClickHandler(ClickEvent evt)
+        private void OnAddItemClickHandler()
         {
             OnAddItemClicked?.Invoke();
         }
 
-        private void OnRemoveItemClickHandler(ClickEvent evt)
+        private void OnRemoveItemClickHandler()
         {
-            var selectedIndex = _itemsListView.selectedIndex;
-            if (selectedIndex < 0 || selectedIndex >= _items.Count) return;
-            var selectedItem = _items[selectedIndex];
-            OnRemoveItemClicked?.Invoke(selectedItem);
+            if (!_selectedItem) return;
+            OnRemoveItemClicked?.Invoke(_selectedItem.ItemName);
         }
 
-        public void UpdateItems(IReadOnlyList<string> newItems)
+        public void UpdateItems(IReadOnlyList<string> items)
         {
-            _items.Clear();
-            _items.AddRange(newItems);
-            _itemsListView.RefreshItems();
-            if (_items.Count > 0)
+            foreach (var item in _inventoryButtonElements)
             {
-                _itemsListView.selectedIndex = Mathf.Clamp(_itemsListView.selectedIndex, 0, _items.Count - 1);
+                item.OnClicked -= OnItemClickedHandler;
+                Destroy(item.gameObject);
             }
+
+            _inventoryButtonElements.Clear();
+
+            foreach (var item in items)
+            {
+                var itemElement = Instantiate(_inventoryItemPrefab, _itemsContainer);
+                _inventoryButtonElements.Add(itemElement);
+                itemElement.Init(item);
+                itemElement.OnClicked += OnItemClickedHandler;
+            }
+
+            _selectedItem = _inventoryButtonElements.Count > 0
+                ? _inventoryButtonElements[^1]
+                : null;
+
+            _selectedItem?.Select();
+        }
+
+        private void OnItemClickedHandler(InventoryButtonElement inventoryButtonElement)
+        {
+            _selectedItem = inventoryButtonElement;
         }
     }
 }

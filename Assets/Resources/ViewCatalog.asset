@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ViewCatalog
   m_EditorClassIdentifier: Assembly-CSharp::Sandbox.MVPUI.ViewCatalog
   _views:
-  - {fileID: 5405150657575337773, guid: ff30f3b58edd18d4889a81704e8f5b84, type: 3}
+  - {fileID: 2592970107874201778, guid: ff30f3b58edd18d4889a81704e8f5b84, type: 3}
